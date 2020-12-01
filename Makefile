@@ -49,20 +49,6 @@ RC_NULL0			= (4)	#预留
 RC_NULL1			= (6)	#预留
 RC_NULL2			= (7)	#预留
 
-#以下为树莓派IO定义，后续版本不再支持树莓派IO功能
-#4个电机的GPIO引脚
-PORT_MOTOR0			= (27)
-PORT_MOTOR1			= (26)
-PORT_MOTOR2			= (28)
-PORT_MOTOR3			= (25)
-#摇控器接收机的6个通道引脚
-GPIO_FB				= (2)	#俯仰
-GPIO_LR				= (12)	#横滚
-GPIO_PW				= (3)	#油门
-GPIO_MD				= (0)	#预留
-GPIO_UD				= (13)	#预留
-GPIO_DI				= (14)	#俯仰横滚灵敏度
-
 ###############################################################################
 
 #工程
@@ -72,12 +58,8 @@ MOD_MODULES				= modlibs
 MOD_MODULES_IO			= mode_io
 MOD_MOTOR				= motor
 MOD_PARAMSCTL			= paramsctl
-MOD_CONTROLLER			= controller
 MOD_MPU6050				= mpu6050
-MOD_HCSR04				= hcsr04
-MOD_FHEIGHT				= fheight
 MOD_DISPLAY				= display
-MOD_LOGGER				= logger
 MOD_COMMAND				= command
 MOD_IO					= modio
 MOD_STM32				= stm32
@@ -89,20 +71,20 @@ RELEASE_PATH		= release
 #头文件
 MOD_INCLUDE			= -Iinclude
 #编译选项
-C_FLAGS				= -pthread -lm -ldl -lwiringPi -std=gnu11
+C_FLAGS				= -pthread -lm -ldl -std=gnu11
 
 all: default
 
-default: pi
-
-pi:	need_wiringpi $(MOD_MKDIR)	$(MOD_PROJECT)	$(MOD_MODULES)
-
-io:	noneed_wiringpi $(MOD_MKDIR)	$(MOD_PROJECT)	$(MOD_MODULES_IO)
+default: defconfig $(MOD_MKDIR) $(MOD_PROJECT) $(MOD_MODULES_IO)
 
 install:
 	./shell/install.sh $(PATH_INSTALL)
 
 defconfig:
+	echo "#ifndef _DEFCONFIG_H_" > include/defconfig.h
+	echo "#define _DEFCONFIG_H_" >> include/defconfig.h
+	echo "" >> include/defconfig.h
+
 	echo "#define $(FLY_MODE)" >> include/defconfig.h
 	echo "#define PROCTED_SPEED	$(PROCTED_SPEED)" >> include/defconfig.h
 	echo "#define MAX_SPEED_RUN_MAX	$(MAX_SPEED_RUN_MAX)" >> include/defconfig.h
@@ -112,16 +94,6 @@ defconfig:
 	echo "#define MAX_ACC	$(MAX_ACC)" >> include/defconfig.h
 	echo "#define MAX_PALSTANCE	$(MAX_PALSTANCE)" >> include/defconfig.h
 	echo "#define I2C_DEV	$(I2C_DEV)" >> include/defconfig.h
-	echo "#define PORT_MOTOR0	$(PORT_MOTOR0)" >> include/defconfig.h
-	echo "#define PORT_MOTOR1	$(PORT_MOTOR1)" >> include/defconfig.h
-	echo "#define PORT_MOTOR2	$(PORT_MOTOR2)" >> include/defconfig.h
-	echo "#define PORT_MOTOR3	$(PORT_MOTOR3)" >> include/defconfig.h
-	echo "#define GPIO_FB	$(GPIO_FB)" >> include/defconfig.h
-	echo "#define GPIO_LR	$(GPIO_LR)" >> include/defconfig.h
-	echo "#define GPIO_PW	$(GPIO_PW)" >> include/defconfig.h
-	echo "#define GPIO_MD	$(GPIO_MD)" >> include/defconfig.h
-	echo "#define GPIO_UD	$(GPIO_UD)" >> include/defconfig.h
-	echo "#define GPIO_DI	$(GPIO_DI)" >> include/defconfig.h
 	
 	echo "#define PWM_OUT0	$(PWM_OUT0)" >> include/defconfig.h
 	echo "#define PWM_OUT1	$(PWM_OUT1)" >> include/defconfig.h
@@ -140,21 +112,7 @@ defconfig:
 	echo "#define RC_NULL0	$(RC_NULL0)" >> include/defconfig.h
 	echo "#define RC_NULL1	$(RC_NULL1)" >> include/defconfig.h
 	echo "#define RC_NULL2	$(RC_NULL2)" >> include/defconfig.h
-	
-need_wiringpi:
-	echo "#ifndef _DEFCONFIG_H_" > include/defconfig.h
-	echo "#define _DEFCONFIG_H_" >> include/defconfig.h
-	echo "" >> include/defconfig.h
-	echo "#define _NEED_WIRINGPI_" >> include/defconfig.h
-	make defconfig
-	echo "" >> include/defconfig.h
-	echo "#endif" >> include/defconfig.h
-	
-noneed_wiringpi:
-	echo "#ifndef _DEFCONFIG_H_" > include/defconfig.h
-	echo "#define _DEFCONFIG_H_" >> include/defconfig.h
-	echo "" >> include/defconfig.h
-	make defconfig
+
 	echo "" >> include/defconfig.h
 	echo "#endif" >> include/defconfig.h
 

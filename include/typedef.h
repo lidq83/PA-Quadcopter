@@ -23,8 +23,6 @@
 #include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
-#include <wiringPi.h>
-#include <wiringSerial.h>
 
 typedef char s8;
 typedef unsigned char u8;

@@ -41,12 +41,6 @@ void engine_start(s32 argc, char* argv[])
 	//处理启动参数
 	if (argc >= 2)
 	{
-
-#ifdef _NEED_WIRINGPI_
-		//初始化WiringPi
-		wiringPiSetup();
-#endif
-
 		//正常模式，飞行，调参
 		if (strcmp(argv[1], "--fly") == 0)
 		{
@@ -58,20 +52,6 @@ void engine_start(s32 argc, char* argv[])
 		if (strcmp(argv[1], "--gyro") == 0 && argc == 3)
 		{
 			emode_start_gyro(argv[2]);
-			return;
-		}
-
-		//校准摇控器模式
-		if (strcmp(argv[1], "--ctl") == 0 && argc == 3)
-		{
-			emode_start_control(argv[2]);
-			return;
-		}
-
-		//电机调试模式
-		if (strcmp(argv[1], "--test") == 0 && argc == 5)
-		{
-			emode_start_test(argv[2], argv[3], argv[4]);
 			return;
 		}
 	}
