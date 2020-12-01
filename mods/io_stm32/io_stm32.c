@@ -174,9 +174,7 @@ void io_rc_data()
 			controller_pitch_pwm((u32)est[RC_PITCH]);
 			controller_roll_pwm((u32)est[RC_ROLL]);
 			controller_power_pwm((u32)est[RC_POW]);
-			controller_pro_pwm((u32)est[RC_SENSITIVE]);
-			controller_mod0_pwm((u32)est[RC_YAW]);
-			controller_mod1_pwm((u32)est[RC_NULL0]);
+			controller_yaw_pwm((u32)est[RC_YAW]);
 		}
 		if (rc_error_count < 2 * PWM_ERR_MAX)
 		{
@@ -188,9 +186,7 @@ void io_rc_data()
 			controller_pitch_pwm((u32)est[RC_PITCH]);
 			controller_roll_pwm((u32)est[RC_ROLL]);
 			controller_power_pwm((u32)est[RC_POW]);
-			controller_pro_pwm((u32)est[RC_SENSITIVE]);
-			controller_mod0_pwm((u32)est[RC_YAW]);
-			controller_mod1_pwm((u32)est[RC_NULL0]);
+			controller_yaw_pwm((u32)est[RC_YAW]);
 		}
 		usleep(ENG_TIMER * 1000);
 	}
@@ -518,8 +514,8 @@ void controller_power_pwm(s32 pw)
 	}
 }
 
-//读入摇控器第4通道PWM信号
-void controller_mod0_pwm(s32 md)
+//读入摇控器航向通道PWM信号
+void controller_yaw_pwm(s32 md)
 {
 	if (md < CTL_PWM_MIN || md > CTL_PWM_MAX)
 	{
@@ -555,46 +551,6 @@ void controller_mod0_pwm(s32 md)
 
 	e->lock_status &= ~(0x1 << 1);
 	e->lock_status &= ~(0x1 << 2);
-}
-
-//读入摇控器第5通道PWM信号
-void controller_mod1_pwm(s32 ud)
-{
-	if (ud < PROCTED_SPEED)
-	{
-		e->ctl_ud = 0;
-		return;
-	}
-	if (ud < CTL_PWM_MIN || ud > CTL_PWM_MAX)
-	{
-		return;
-	}
-	if (p->ctl_ud_zero < CTL_PWM_MIN || p->ctl_ud_zero > CTL_PWM_MAX)
-	{
-		p->ctl_ud_zero = 1060;
-	}
-	e->ctl_ud = ud;
-}
-
-//读入摇控器方向舵比例缩放通道PWM信号
-void controller_pro_pwm(s32 di)
-{
-	if (di < PROCTED_SPEED)
-	{
-		e->ctl_di = 0;
-		return;
-	}
-	if (di < CTL_PWM_MIN || di > CTL_PWM_MAX)
-	{
-		return;
-	}
-	//如果读数超出范围
-	if (p->ctl_di_zero < CTL_PWM_MIN || p->ctl_di_zero > CTL_PWM_MAX)
-	{
-		//这个通道比较特殊，它是对方向舵数值做比例缩放用的，所以当它为读数超出范围时不希望它起作用所以默认读数为0
-		p->ctl_di_zero = 0;
-	}
-	e->ctl_di = di;
 }
 
 //取绝对值

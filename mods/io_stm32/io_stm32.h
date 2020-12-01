@@ -112,14 +112,8 @@ void controller_roll_pwm(s32 lr);
 //读入摇控器“油门”的PWM信号
 void controller_power_pwm(s32 pw);
 
-//读入摇控器第4通道PWM信号
-void controller_mod0_pwm(s32 md);
-
-//读入摇控器第5通道PWM信号
-void controller_mod1_pwm(s32 ud);
-
-//读入摇控器方向舵比例缩放通道PWM信号
-void controller_pro_pwm(s32 di);
+//读入摇控器航向通道PWM信号
+void controller_yaw_pwm(s32 md);
 
 //取绝对值
 f32 controller_abs(f32 x);
